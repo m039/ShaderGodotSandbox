@@ -7,29 +7,29 @@ public partial class Program : Node
 {
     PopupMenu _shadersPopupMenu;
 
-	ShaderMaterial _shaderMaterial;
+    ShaderMaterial _shaderMaterial;
 
-	string _firstShader;
+    string _firstShader;
 
-	string _selectedShader;
+    string _selectedShader;
 
-	FileSystemWatcher _watcher;
+    FileSystemWatcher _watcher;
 
     public override void _Ready()
     {
         _shadersPopupMenu = GetNode<PopupMenu>("VBoxContainer/MenuBar/Shaders");
         _shadersPopupMenu.Clear();
-		_shaderMaterial = (ShaderMaterial)GetNode<Control>("VBoxContainer/Panel").Material;	
-		_watcher = new FileSystemWatcher("Shaders");
-		_watcher.NotifyFilter = NotifyFilters.Attributes | 
-			NotifyFilters.LastWrite;
+        _shaderMaterial = (ShaderMaterial)GetNode<Control>("VBoxContainer/Panel").Material;	
+        _watcher = new FileSystemWatcher("Shaders");
+        _watcher.NotifyFilter = NotifyFilters.Attributes | 
+            NotifyFilters.LastWrite;
 
-		_watcher.Changed += OnChanged;
-		_watcher.Filter = "*.gdshader";
-		_watcher.EnableRaisingEvents = true;
+        _watcher.Changed += OnChanged;
+        _watcher.Filter = "*.gdshader";
+        _watcher.EnableRaisingEvents = true;
 
         PopulatePopupMenu();
-		SelectShader(_firstShader);
+        SelectShader(_firstShader);
     }
 
     private void OnChanged(object sender, FileSystemEventArgs e)
@@ -41,10 +41,10 @@ public partial class Program : Node
     {
         base._Notification(what);
 
-		if (what == NotificationPredelete) {
-			_watcher?.Dispose();
-			_watcher = null;
-		}
+        if (what == NotificationPredelete) {
+            _watcher?.Dispose();
+            _watcher = null;
+        }
     }
 
     void PopulatePopupMenu()
@@ -65,20 +65,20 @@ public partial class Program : Node
         {
             _shadersPopupMenu.AddItem(name);
 
-			if (_firstShader == null) {
-				_firstShader = name;
-			}
+            if (_firstShader == null) {
+                _firstShader = name;
+            }
         }
     }
 
     private void OnShadersIdPressed(long id)
     {
-		SelectShader(_shadersPopupMenu.GetItemText(_shadersPopupMenu.GetItemIndex((int)id)));
+        SelectShader(_shadersPopupMenu.GetItemText(_shadersPopupMenu.GetItemIndex((int)id)));
     }
 
     void SelectShader(string shaderName)
     {
-		_shaderMaterial.Shader.Code = File.ReadAllText(Path.Combine("Shaders", shaderName + ".gdshader"));
-		_selectedShader = shaderName;
+        _shaderMaterial.Shader.Code = File.ReadAllText(Path.Combine("Shaders", shaderName + ".gdshader"));
+        _selectedShader = shaderName;
     }
 }
